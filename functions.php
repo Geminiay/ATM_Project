@@ -12,92 +12,71 @@ function withdraw($amount) {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $sql = "SELECT * FROM banknotes ORDER BY denomination DESC";
+    $sql = "SELECT denomination, quantity FROM banknotes WHERE denomination IN (200, 100, 50, 20, 10, 5) ORDER BY denomination DESC";
     $result = $conn->query($sql);
-    $banknotes = [];
+
+    $banknotes = [
+        200 => 0,
+        100 => 0,
+        50 => 0,
+        20 => 0,
+        10 => 0,
+        5 => 0
+    ];
+
     while ($row = $result->fetch_assoc()) {
         $banknotes[$row['denomination']] = $row['quantity'];
     }
 
-    $withdrawNotes = [];
-    $originalAmount = $amount;
+    $withdraw200 = 0;
+    $withdraw100 = 0;
+    $withdraw50 = 0;
+    $withdraw20 = 0;
+    $withdraw10 = 0;
+    $withdraw5 = 0;
+
+    $remaining = $amount;
 
     foreach ($banknotes as $denomination => $quantity) {
-        if ($amount == 0) break;
-        $numNotes = min(floor($amount / $denomination), $quantity);
-        if ($numNotes > 0) {
-            $withdrawNotes[$denomination] = $numNotes;
-            $amount -= $numNotes * $denomination;
-        }
+        $numNotes = min(floor($remaining / $denomination), $quantity);
+        $remaining -= $numNotes * $denomination;
+        if ($denomination == 200) $withdraw200 = $numNotes;
+        if ($denomination == 100) $withdraw100 = $numNotes;
+        if ($denomination == 50) $withdraw50 = $numNotes;
+        if ($denomination == 20) $withdraw20 = $numNotes;
+        if ($denomination == 10) $withdraw10 = $numNotes;
+        if ($denomination == 5) $withdraw5 = $numNotes;
     }
 
-    if ($amount > 0) {
-        $combination = findCombination($originalAmount, $banknotes);
-        if ($combination) {
-            $withdrawNotes = $combination;
-            $amount = 0;
-        } else {
-            return "Insufficient funds or appropriate denominations.";
-        }
-    }
-
-    if ($amount > 0) {
+    if ($remaining > 0) {
         return "Insufficient funds or appropriate denominations.";
     }
 
-    foreach ($withdrawNotes as $denomination => $numNotes) {
-        $sql = "UPDATE banknotes SET quantity = quantity - $numNotes WHERE denomination = $denomination";
-        $conn->query($sql);
-    }
+    if ($withdraw200 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw200 WHERE denomination = 200");
+    if ($withdraw100 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw100 WHERE denomination = 100");
+    if ($withdraw50 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw50 WHERE denomination = 50");
+    if ($withdraw20 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw20 WHERE denomination = 20");
+    if ($withdraw10 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw10 WHERE denomination = 10");
+    if ($withdraw5 > 0) $conn->query("UPDATE banknotes SET quantity = quantity - $withdraw5 WHERE denomination = 5");
 
     $conn->close();
-    return $withdrawNotes;
+
+    return "Withdraw successful. Banknotes dispensed: <br>200 x $withdraw200<br>100 x $withdraw100<br>50 x $withdraw50<br>20 x $withdraw20<br>10 x $withdraw10<br>5 x $withdraw5";
 }
 
-function findCombination($amount, $banknotes) {
-    $denominations = array_keys($banknotes);
-    sort($denominations);
-    $combinations = [];
-
-    function backtrack($amount, $banknotes, $denominations, $index, &$combinations, $currentCombination) {
-        if ($amount == 0) {
-            $combinations[] = $currentCombination;
-            return;
-        }
-
-        for ($i = $index; $i < count($denominations); $i++) {
-            $denomination = $denominations[$i];
-            if ($denomination > $amount || $banknotes[$denomination] == 0) continue;
-
-            $maxNotes = min(floor($amount / $denomination), $banknotes[$denomination]);
-            for ($numNotes = $maxNotes; $numNotes >= 1; $numNotes--) {
-                $currentCombination[$denomination] = $numNotes;
-                backtrack($amount - ($numNotes * $denomination), $banknotes, $denominations, $i + 1, $combinations, $currentCombination);
-                unset($currentCombination[$denomination]);
-            }
-        }
-    }
-
-    backtrack($amount, $banknotes, $denominations, 0, $combinations, []);
-
-    if (!empty($combinations)) {
-        return $combinations[0]; // Return the first valid combination found
-    }
-
-    return false;
-}
-
-function deposit($depositNotes) {
+function deposit($deposit5, $deposit10, $deposit20, $deposit50, $deposit100, $deposit200) {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    foreach ($depositNotes as $denomination => $quantity) {
-        $sql = "UPDATE banknotes SET quantity = quantity + $quantity WHERE denomination = $denomination";
-        $conn->query($sql);
-    }
+    if ($deposit5 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit5 WHERE denomination = 5");
+    if ($deposit10 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit10 WHERE denomination = 10");
+    if ($deposit20 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit20 WHERE denomination = 20");
+    if ($deposit50 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit50 WHERE denomination = 50");
+    if ($deposit100 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit100 WHERE denomination = 100");
+    if ($deposit200 > 0) $conn->query("UPDATE banknotes SET quantity = quantity + $deposit200 WHERE denomination = 200");
 
     $conn->close();
     return "Deposit successful.";
