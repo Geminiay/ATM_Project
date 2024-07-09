@@ -20,12 +20,24 @@ function withdraw($amount) {
     }
 
     $withdrawNotes = [];
+    $originalAmount = $amount;
+
     foreach ($banknotes as $denomination => $quantity) {
         if ($amount == 0) break;
         $numNotes = min(floor($amount / $denomination), $quantity);
         if ($numNotes > 0) {
             $withdrawNotes[$denomination] = $numNotes;
             $amount -= $numNotes * $denomination;
+        }
+    }
+
+    if ($amount > 0) {
+        $combination = findCombination($originalAmount, $banknotes);
+        if ($combination) {
+            $withdrawNotes = $combination;
+            $amount = 0;
+        } else {
+            return "Insufficient funds or appropriate denominations.";
         }
     }
 
@@ -40,6 +52,39 @@ function withdraw($amount) {
 
     $conn->close();
     return $withdrawNotes;
+}
+
+function findCombination($amount, $banknotes) {
+    $denominations = array_keys($banknotes);
+    sort($denominations);
+    $combinations = [];
+
+    function backtrack($amount, $banknotes, $denominations, $index, &$combinations, $currentCombination) {
+        if ($amount == 0) {
+            $combinations[] = $currentCombination;
+            return;
+        }
+
+        for ($i = $index; $i < count($denominations); $i++) {
+            $denomination = $denominations[$i];
+            if ($denomination > $amount || $banknotes[$denomination] == 0) continue;
+
+            $maxNotes = min(floor($amount / $denomination), $banknotes[$denomination]);
+            for ($numNotes = $maxNotes; $numNotes >= 1; $numNotes--) {
+                $currentCombination[$denomination] = $numNotes;
+                backtrack($amount - ($numNotes * $denomination), $banknotes, $denominations, $i + 1, $combinations, $currentCombination);
+                unset($currentCombination[$denomination]);
+            }
+        }
+    }
+
+    backtrack($amount, $banknotes, $denominations, 0, $combinations, []);
+
+    if (!empty($combinations)) {
+        return $combinations[0]; // Return the first valid combination found
+    }
+
+    return false;
 }
 
 function deposit($depositNotes) {

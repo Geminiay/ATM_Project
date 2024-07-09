@@ -24,7 +24,7 @@
                     $amount = intval($_POST['withdrawAmount']);
                     $result = withdraw($amount);
                     if (is_array($result)) {
-                        echo "Withdraw successful. Notes dispensed: <br>";
+                        echo "Withdraw successful. Banknotes dispensed: <br>";
                         foreach ($result as $denomination => $count) {
                             echo "$denomination x $count<br>";
                         }
