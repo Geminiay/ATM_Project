@@ -19,7 +19,7 @@ h1 {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 350px;
 }
 
 h2 {
@@ -30,6 +30,7 @@ h2 {
 form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 label {
@@ -43,10 +44,12 @@ input[type="number"] {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 button {
-    padding: 10px;
+    padding: 10px 20px;
     background-color: #007BFF;
     color: #fff;
     border: none;
@@ -54,6 +57,7 @@ button {
     cursor: pointer;
     margin-top: 10px;
     font-weight: bold;
+    width: fit-content;
 }
 
 button:hover {
@@ -63,43 +67,25 @@ button:hover {
 .result {
     margin-top: 20px;
     color: #333;
+    text-align: center;
 }
 
-.tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-    margin-bottom: 20px;
-    border-radius: 8px;
+.deposit-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    justify-items: center;
 }
 
-.tab button {
-    background-color: #007BFF;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-    font-size: 17px;
-    color: white;
-    border-radius: 8px 8px 0 0;
-    margin-right: 2px;
+.deposit-input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-.tab button:hover {
-    background-color: #0056b3;
-}
-
-.tab button.active {
-    background-color: #004080;
-}
-
-.tabcontent {
-    display: none;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    background-color: white;
+.button-container {
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }

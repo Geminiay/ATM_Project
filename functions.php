@@ -86,7 +86,7 @@ function findCombination($amount, $banknotes) {
     backtrack($amount, $banknotes, $denominations, 0, $combinations, [], $minNotes);
 
     if (!empty($combinations)) {
-        return $combinations[0]; // Return the best combination found
+        return $combinations[0];
     }
 
     return false;

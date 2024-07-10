@@ -37,26 +37,34 @@
         </div>
         <div>
             <h2>Deposit Money</h2>
-            <form action="atm.php" method="post">
-                <label for="deposit5">5:</label>
-                <input type="number" id="deposit5" name="deposit[5]" value="0" required>
-                <br>
-                <label for="deposit10">10:</label>
-                <input type="number" id="deposit10" name="deposit[10]" value="0" required>
-                <br>
-                <label for="deposit20">20:</label>
-                <input type="number" id="deposit20" name="deposit[20]" value="0" required>
-                <br>
-                <label for="deposit50">50:</label>
-                <input type="number" id="deposit50" name="deposit[50]" value="0" required>
-                <br>
-                <label for="deposit100">100:</label>
-                <input type="number" id="deposit100" name="deposit[100]" value="0" required>
-                <br>
-                <label for="deposit200">200:</label>
-                <input type="number" id="deposit200" name="deposit[200]" value="0" required>
-                <br>
-                <button type="submit" name="action" value="deposit">Deposit</button>
+            <form action="atm.php" method="post" class="deposit-form">
+                <div class="deposit-input">
+                    <label for="deposit5">5:</label>
+                    <input type="number" id="deposit5" name="deposit[5]" value="0" required>
+                </div>
+                <div class="deposit-input">
+                    <label for="deposit10">10:</label>
+                    <input type="number" id="deposit10" name="deposit[10]" value="0" required>
+                </div>
+                <div class="deposit-input">
+                    <label for="deposit20">20:</label>
+                    <input type="number" id="deposit20" name="deposit[20]" value="0" required>
+                </div>
+                <div class="deposit-input">
+                    <label for="deposit50">50:</label>
+                    <input type="number" id="deposit50" name="deposit[50]" value="0" required>
+                </div>
+                <div class="deposit-input">
+                    <label for="deposit100">100:</label>
+                    <input type="number" id="deposit100" name="deposit[100]" value="0" required>
+                </div>
+                <div class="deposit-input">
+                    <label for="deposit200">200:</label>
+                    <input type="number" id="deposit200" name="deposit[200]" value="0" required>
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="action" value="deposit">Deposit</button>
+                </div>
             </form>
             <div class="result">
                 <?php
