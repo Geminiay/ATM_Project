@@ -14,13 +14,9 @@ function withdraw($amount) {
 
     $sql = "SELECT * FROM banknotes ORDER BY denomination DESC";
     $result = $conn->query($sql);
-    $banknotes = [];
     while ($row = $result->fetch_assoc()) {
         $banknotes[$row['denomination']] = $row['quantity'];
     }
-
-    $withdrawNotes = [];
-    $originalAmount = $amount;
 
     foreach ($banknotes as $denomination => $quantity) {
         if ($amount == 0) break;
@@ -29,11 +25,6 @@ function withdraw($amount) {
             $withdrawNotes[$denomination] = $numNotes;
             $amount -= $numNotes * $denomination;
         }
-    }
-
-    if ($amount > 0) {
-            return "Insufficient funds or appropriate denominations.";
-        
     }
 
     if ($amount > 0) {
